@@ -1,0 +1,60 @@
+
+
+tail -f /mnt/sda1/logs/php.log
+
+
+sqlite3 /mnt/sda1/db/Medicine.sql3 "select * from medicine_master;"
+
+sqlite3 /mnt/sda1/db/Medicine.sql3 "select * from user_data;"
+
+sqlite3 /mnt/sda1/db/Medicine.sql3 "select * from users;"
+
+
+
+sqlite3 /mnt/sda1/db/Medicine.sql3 "delete from medicine_master where rfid_value='93b323b' ;"
+
+
+
+for row in cursor.fetchall():
+        task_id, priority, details, status, deadline = row
+        print '%2d {%d} %-20s [%-8s] (%s)' % (task_id, priority, details, status, deadline)
+		
+		
+		
+		sqlite3 /mnt/sda1/db/Medicine.sql3 "select distinct(date('now','localtime')) from user_data;"
+		
+		select * from user_data where rfid_value = :my_value and userid = :user_id and date_taken= date('now','localtime');
+		
+		select * from user_data where rfid_value = "93b323b" and userid = "2" and date_taken= date('now','localtime');
+		
+		insert into user_data values ("2","VIT3",)
+		
+		
+		card2 ="82117d52"
+		
+		
+		
+		./Medicine.py CheckRFID/2/93b323b
+		./MedicineReminderMail.py Mail/2/93b323b
+		
+		./UsingDates.py CheckRFID/2/93b323b
+		now.time() < datetime.time(hour=8)
+		
+		./Medicine.py CheckRFID/2/93b323b
+		
+		
+		
+		10.201.84.247
+		
+		
+		update set email='chinmay.shah@colorado.edu' where userid='2';
+		
+		
+		10.201.23.89
+		
+		82117d52
+		
+		select
+		10.201.84.54
+		
+		10.201.23.89

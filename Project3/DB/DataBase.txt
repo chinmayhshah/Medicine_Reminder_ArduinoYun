@@ -1,0 +1,246 @@
+
+--Login Table 
+CREATE TABLE login( loginid INTEGER PRIMARY KEY ASC, 
+ip VARCHAR(45), user VARCHAR(64), logdate DATETIME, 
+action VARCHAR(10));
+
+-- Users table
+CREATE TABLE users( userid
+INTEGER PRIMARY KEY ASC, username VARCHAR(45),
+password VARCHAR(64), salt VARCHAR(64), email);
+
+--user_group
+CREATE TABLE user_group( userid
+INTEGER PRIMARY KEY , usergroup VARCHAR(1));
+
+A -  Admin
+U - User
+-- values inserted for user_group 
+insert into user_group values ("1","U");
+
+
+-- medicine_master
+-- modification of composite primary key 
+-- addition of dateentry
+CREATE TABLE medicine_master( userid
+INTEGER , medicine_name VARCHAR(45),
+rfid_value VARCHAR(64), bh INTEGER(1), lh INTEGER(1), dn INTEGER(1),dateentry DATETIME,
+PRIMARY KEY(userid,rfid_value)
+);
+
+--user_data
+
+CREATE TABLE user_data( userid
+INTEGER PRIMARY KEY, medicine_name VARCHAR(45),
+rfid_value VARCHAR(64), bh INTEGER(1), lh INTEGER(1), dn INTEGER(1), logdate DATETIME);
+---changed for composite key 
+DROP TABLE user_data
+
+CREATE TABLE user_data( userid
+INTEGER, 
+rfid_value VARCHAR(64), bh INTEGER(1), lh INTEGER(1), dn INTEGER(1), logdate DATETIME,date_taken DATE,
+PRIMARY KEY(userid,rfid_value,date_taken)
+);
+
+
+
+
+
+
+
+
+
+
+
+
+--- remove the medicine_name
+---testing
+--alter table medicine_master add dateentry DATETIME;
+--insert into medicine_master (userid,medicine_name,rfid_value,bh,lh,dn,dateentry) 
+values ("1","test","testrfid","1","1","1",datetime("now","localtime"))
+
+--testing for new table 
+--insert into user_data (userid,medicine_name,rfid_value,bh,lh,dn,logdate,date_taken) 
+values ("2","VITd","93b323b","1","0","0",datetime("now","localtime"),date("now","localtime"));
+
+sqlite3 /mnt/sda1/db/Medicine.sql3 "insert into user_data (userid,medicine_name,rfid_value,bh,lh,dn,logdate,date_taken) 
+values ("2","VITd","93b323b","1","0","0",datetime("now","localtime"),date("now","localtime"));"
+
+
+insert into user_data (userid,medicine_name,rfid_value,bh,lh,dn,logdate,date_taken) 
+values ("2","VITd","93b323b","1","0","0",datetime("now","localtime"),date("now","localtime"));
+
+
+query="""insert into user_data (userid,medicine_name,rfid_value,bh,lh,dn,logdate,date_taken)  values (:user_id,:my_value,"1","0","0",datetime("now","localtime"),date("now","localtime"))"""
+c.execute(query,{'my_value':my_value,'user_id':user_id})
+
+
+--- update if row not already found 
+update  user_data set bh='1'
+where userid=""
+and   rfid_value=""
+and   date=("now","localtime"))
+
+//steps for insatlling the python sqlite3 package
+ 
+
+opkg update 
+opkg install python-sqlite3
+
+
+//Queries for the Checking of the Medicine part 
+
+select BH,LH,DN from medicine_master where user_id="" and rfid_value="";  
+//values fetched then check for values which are one 
+//for time interval 
+if (BH)
+select  BH from user_data where user_id="" and rfid_value="" and logdate="";
+
+
+//
+
+query =""" select * from user where userid = :user_id """"
+
+
+query="""update user_data set bh=:bh  where  rfid_value = :my_value and userid = :user_id and date_taken= date('now','localtime') """
+        c.execute(query,{'my_value':my_value,'user_id':user_id})
+		
+		
+		
+./TakeMed/		
+
+
+--- report weekly
+group by days 
+--------
+SELECT strftime('%m', trxDateTime) as valMonth, 
+SUM(trxAmount) as valTotalMonth 
+FROM trx_log 
+WHERE strftime('%Y', trxDateTime)='2014' GROUP BY valMonth
+
+----------------------------
+Report Monthly 
+----------------------------
+select case strftime('%m',user_data.date_taken) when '01' then 'January' when '02' then 'Febuary' when '03' then 'March' when '04' then 'April' when '05' then 'May' when '06' then 'June' when '07' then 'July' when '08' then 'August' when '09' then 'September' when '10' then 'October' when '11' then 'November' when '12' then 'December' else '' end
+as month,SUM(user_data.bh) as BF,SUM(user_data.lh) as LH,SUM(user_data.dn) as DN,medicine_master.medicine_name
+	from user_data,medicine_master
+	where 
+	user_data.rfid_value=medicine_master.rfid_value
+	and  user_data.userid=medicine_master.userid
+	and strftime('%m',user_data.date_taken) = strftime('%m',date(now))
+	group by medicine_master.medicine_name,strftime('%m', user_data.date_taken)
+	order by strftime('%m', user_data.date_taken),medicine_master.medicine_name desc;
+	
+--- select strftime('%m', datetime(datefield, 'unixepoch')) as month from table
+--------------------------------------------------------------------------------
+select strftime('%m', datetime(user_data.date_taken, 'unixepoch')) as Month,SUM(user_data.bh) as BF,SUM(user_data.lh) as LH,SUM(user_data.dn) as DN,medicine_master.medicine_name
+	from user_data,medicine_master
+	where 
+	user_data.rfid_value=medicine_master.rfid_value
+	and  user_data.userid=medicine_master.userid
+	group by medicine_master.medicine_name,strftime('%m', datetime(user_data.date_taken, 'unixepoch'))
+	order by strftime('%m', datetime(user_data.date_taken, 'unixepoch')),medicine_master.medicine_name desc;
+---------------Working Query -------------------------------------------------------------------------------------------
+select 
+case strftime('%m',user_data.date_taken) when '01' then 'January' when '02' then 'Febuary' when '03' then 'March' when '04' then 'April' when '05' then 'May' when '06' then 'June' when '07' then 'July' when '08' then 'August' when '09' then 'September' when '10' then 'October' when '11' then 'November' when '12' then 'December' else '' end as month,
+SUM(user_data.bh) as BF,
+SUM(user_data.lh) as LH,
+SUM(user_data.dn) as DN,
+medicine_master.medicine_name
+from user_data,medicine_master 
+where 
+user_data.rfid_value=medicine_master.rfid_value 
+and  user_data.userid=medicine_master.userid 
+and strftime('%Y',user_data.date_taken) = strftime('%Y','now') 
+and medicine_master.userid="2"
+group by medicine_master.medicine_name,strftime('%m', user_data.date_taken) 
+order by strftime('%m', user_data.date_taken),medicine_master.medicine_name desc; 
+----- In PHP
+--- with \
+select 
+case strftime('%m',user_data.date_taken) when '01' then 'January' when '02' then 'Febuary' when '03' then 'March' when '04' then 'April' when '05' then 'May' when '06' then 'June' when '07' then 'July' when '08' then 'August' when '09' then 'September' when '10' then 'October' when '11' then 'November' when '12' then 'December' else '' end as month,
+SUM(user_data.bh) as BF,
+SUM(user_data.lh) as LH,
+SUM(user_data.dn) as DN,
+medicine_master.medicine_name
+from user_data,medicine_master 
+where 
+user_data.rfid_value=medicine_master.rfid_value 
+and  user_data.userid=medicine_master.userid 
+and strftime('%Y',user_data.date_taken) = strftime('%Y','now') 
+and medicine_master.userid=":userid"
+group by medicine_master.medicine_name,strftime('%m', user_data.date_taken) 
+order by strftime('%m', user_data.date_taken),medicine_master.medicine_name desc; 
+
+
+
+
+	
+-----------------------------
+Report Weekly 
+---------------------------- 
+select 
+	strftime('%m %d %yy ', user_data.date_taken) as Date,
+	medicine_master.medicine_name,
+	SUM(user_data.bh) as BF, 
+	SUM(user_data.lh) as LH,
+	SUM(user_data.dn) as DN,
+	from user_data,medicine_master
+	where 
+	user_data.rfid_value=medicine_master.rfid_value
+	and  user_data.userid=medicine_master.userid
+	and medicine_master.user_id=":userid"
+	group by medicine_master.medicine_name,strftime('%d', user_data.date_taken)
+	order by strftime('%d', user_data.date_taken),medicine_master.medicine_name desc;
+
+------------------------------------------
+For Last week 
+'now', 'weekday 0', '-7 days'
+--------------------------------------------
+---- Last Week Data 
+
+select strftime('%d', user_data.date_taken) as Month,SUM(user_data.bh),SUM(user_data.lh),SUM(user_data.dn),medicine_master.medicine_name
+	from user_data,medicine_master
+	where 
+	user_data.rfid_value=medicine_master.rfid_value
+	and  user_data.userid=medicine_master.userid
+	and strftime('%s',user_data.date_taken) >= strftime('%s','now', 'weekday 0', '-7 days')
+	group by medicine_master.medicine_name,strftime('%d', user_data.date_taken)
+	order by strftime('%d', user_data.date_taken),medicine_master.medicine_name desc;
+----------------------
+in PHP
+----------------------
+select 
+	strftime(\'%d\', user_data.date_taken) as Month,
+	medicine_master.medicine_name,
+	SUM(user_data.bh),
+	SUM(user_data.lh),
+	SUM(user_data.dn)
+	from 
+		user_data,
+		medicine_master
+	where 
+		user_data.rfid_value=medicine_master.rfid_value
+	and user_data.userid=medicine_master.userid
+	and strftime(\'%s\',user_data.date_taken) >= strftime(\'%s\',\'now\', \'weekday 0\', \'-7 days\')
+	and medicine_master.user_id=\":userid\"
+	group by medicine_master.medicine_name,strftime(\'%d\', user_data.date_taken)
+	order by strftime(\'%d\', user_data.date_taken),medicine_master.medicine_name desc;
+
+
+
+
+---- This Week Data 
+
+select strftime('%d', user_data.date_taken) as Month,SUM(user_data.bh),SUM(user_data.lh),SUM(user_data.dn),medicine_master.medicine_name
+	from user_data,medicine_master
+	where 
+	user_data.rfid_value=medicine_master.rfid_value
+	and  user_data.userid=medicine_master.userid
+	and strftime('%s',user_data.date_taken) >= strftime('%s','now', 'weekday 0')
+	group by medicine_master.medicine_name,strftime('%d', user_data.date_taken)
+	order by strftime('%d', user_data.date_taken),medicine_master.medicine_name desc;
+
+
+
+
